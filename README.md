@@ -1,4 +1,4 @@
-#print_queue#
+# print_queue
 
 print_queue monitors a directory for new files of printable type (pdf, png, jpg, txt) and uses the `lp` command to print them.  It also maintains a "database" of jobs printed.
 
