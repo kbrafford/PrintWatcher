@@ -25,10 +25,11 @@ def get_files(directory):
 
 @click.command()
 @click.argument("directory",type=click.Path(exists=True))
-@click.option("--stime", default=2.5, help="Sleep loop time")
-@click.option("--ext", default=DEFAULT_EXT, help="what types to print")
-@click.option("--log", default="_log", help="history of printed files")
-def printd(directory,stime,ext,log):
+@click.option("--ptime", default=2.5, help="loop polling interval (default: 2.5s)")
+@click.option("--ext", default=DEFAULT_EXT, help='what types to print (default: "pdf;png;jpg;txt")')
+@click.option("--log", default="_log", help="directory for archive of printed files (default: _log)")
+@click.option("--cmd", default="lp", help="print command to shell out to (default: lp)")
+def printd(directory,ptime,ext,log, cmd):
     global EXTENSIONS
 
     filestore = FileStore("_log")
@@ -37,12 +38,13 @@ def printd(directory,stime,ext,log):
 
     EXTENSIONS = ext.split(";")
     print ("extensions:", EXTENSIONS)
-    print ("Sleep loop time:", stime)
+    print ("polling interval:", ptime)
+    print ("print command:", cmd)
     previous_set = get_files(directory)
     print ("set:", previous_set)
 
     while True:
-        time.sleep(stime)
+        time.sleep(ptime)
         new_set = get_files(directory)
 
         deletions = previous_set - new_set
@@ -56,11 +58,11 @@ def printd(directory,stime,ext,log):
             for change in tqdm.tqdm(changes):
                 print("Printing", "..." + str(change[0])[-16:], change[1])
                 filestore.add(change[1])
-                ret = os.system('lp "%s"' % change[1])
+                ret = os.system('%s "%s"' % (cmd, change[1]))
                 if ret:
                     logging.info("Print error: %d" % ret)
                 else:
-                    logging.info("Print seems to have worked")
+                    logging.info("Print seems to have worked (rc=0)")
 
             previous_set = new_set
 
