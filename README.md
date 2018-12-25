@@ -13,6 +13,30 @@ PrintWatcher monitors a specified directory for new files of printable type (pdf
 
 PrintWatcher reads the inital contents of the print folder and deliberately ignores those files that were there at the time the program is started.  Only changes to the folder that occur after launching `printd.py` are tracked and acted on.
 
+Note: I have only tested this on 64-bit linux, not 32-bit.  The only issue that might come up is the `hash()` of the `os.stat()` call. 
+It probably won't make a difference, but I notice that the hash function on 64-bit python is different enough than 32-bit python 
+that it warants a closer look to make sure the hashing strategy of the `FileStore` still works the same.
+
+    Python 2.7.15rc1 (default, Apr 15 2018, 21:51:34) 
+    [GCC 7.3.0] on linux2
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import os
+    >>> import platform
+    >>> platform.architecture()
+    ('64bit', '')
+    >>> [hex(hash(os.stat(f))) for f in os.listdir(".")]
+    ['-0x2d2b0f1830658e14', '0x5fb210d4cf3c423', '-0x171c8db56ac54d0b', '0x7cf4a771ab6b6683', '0x46e74ddba82eb094', '-0x68c2e04bab6d4b69', '-0x2c207fa10106623b', '0x41a4407a21404b7c', '0x260e7e4be4d75c2b']
+
+    Python 2.7.13 (v2.7.13:a06454b1afa1, Dec 17 2016, 20:42:59) [MSC v.1500 32 bit (Intel)] on win32
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import os
+    >>> import platform
+    >>> platform.architecture()
+    ('32bit', 'WindowsPE')
+    >>> [hex(hash(os.stat(f))) for f in os.listdir(".")]
+    ['-0x11e55e73', '-0x17add4d6', '0x43ce4ee2', '0x4a71ae77', '-0x73fbb891', '-0x279ad375', '0x21220556', '0x9af37e6', '0x78bd18e9']
+   
+
 ## Quick Start
 
 Make a directory visible from the linux box that can successfully use your printer. Make this directory in a share that is also visible from the gimped-up computer that can't use the printer as well.
