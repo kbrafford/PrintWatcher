@@ -11,6 +11,7 @@ PrintWatcher monitors a specified directory for new files of printable type (pdf
       --cmd TEXT     print command to shell out to (default: lp)
       --help         Show this message and exit.
 
+PrintWatcher reads the inital contents of the print folder and deliberately ignores those files that were there at the time the program is started.  Only changes to the folder that occur after launching `printd.py` are tracked and acted on.
 
 ## Quick Start
 
